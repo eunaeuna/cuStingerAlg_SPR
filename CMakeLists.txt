@@ -63,7 +63,8 @@ cuda_add_library(custingerAlgs
           src/static_connected_components/cc_concurrent.cu
           src/static_connected_components/cc_load_balanced.cu
           # src/streaming_triangle_counting/cct_upd.cu
-          src/static_page_rank/pr.cu              
+          src/static_page_rank/pr.cu
+          src/streaming_page_rank/pr.cu 
           src/load_balance.cu
         )
 

@@ -15,7 +15,7 @@
 #include "static_breadth_first_search/bfs.cuh"
 #include "static_connected_components/cc.cuh"
 #include "static_page_rank/pr.cuh"
-
+#include "streaming_page_rank/pr.cuh"
 
 using namespace cuStingerAlgs;
 
@@ -83,7 +83,7 @@ int main(const int argc, char *argv[]){
 
 	
 	float totalTime;
-
+#if 0
 	ccBaseline scc;
 	scc.Init(custing);
 	scc.Reset();
@@ -155,13 +155,14 @@ int main(const int argc, char *argv[]){
 	cout << "Total time for connected-BFS : " << totalTime << endl; 
 
 	bfs.Release();
+#endif
 
 	StaticPageRank pr;
 	pr.Init(custing);
 	pr.Reset();
-	pr.setInputParameters(5,0.001);
+	pr.setInputParameters(50,0.0000001);
 	start_clock(ce_start, ce_stop);
-//	pr.Run(custing);
+	pr.Run(custing);
 	totalTime = end_clock(ce_start, ce_stop);
 	cout << "The number of iterations      : " << pr.getIterationCount() << endl;
 	cout << "Total time for pagerank       : " << totalTime << endl; 
@@ -170,8 +171,19 @@ int main(const int argc, char *argv[]){
 
 	pr.Release();
 
+        StreamingPageRank upr;
+        upr.Init(custing);
+        upr.Reset();
+        upr.setInputParameters(50,0.0000001);
+        start_clock(ce_start, ce_stop);
+        upr.Run(custing);
+        totalTime = end_clock(ce_start, ce_stop);
+        cout << "The number of iterations      : " << upr.getIterationCount() << endl;
+        cout << "Total time for pagerank       : " << totalTime << endl;
+        cout << "Average time per iteartion    : " << totalTime/(float)upr.getIterationCount() << endl;
+        upr.printRankings(custing);
 
-	custing.freecuStinger();
+        upr.Release();
 
 	free(off);
 	free(adj);
