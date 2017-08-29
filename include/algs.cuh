@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include <cuda.h>
 #include <cuda_runtime.h>
 #include <stdio.h>
@@ -78,13 +77,18 @@ public:
 	T* getQueue(){return queue;}
 	__host__ __device__	length_t getQueueEnd(){return queueEnd;}
 	__host__ __device__ length_t getQueueCurr(){return queueCurr;}
-	void     setQueueCurr(length_t curr){queueCurr=curr;}
+
+	void setQueueCurr(length_t curr) { queueCurr = curr; }
+
+	void setQueueEnd(length_t end) { queueEnd = end; }
 
 	void resetQueue(){queueCurr=queueEnd=0;}
 	length_t getActiveQueueSize(){return queueEnd-queueCurr;}
 
 	T* getQueueAtCurr(){return queue+queueCurr;}
 	T* getQueueAtEnd(){return queue+queueEnd;}
+	T* getQueueAtBegin(){return queue;} //added
+	T  getQueueItem(length_t pos){return queue[pos];}
 
 	static void swapQueues(Queue* q1, Queue* q2){
 		Queue temp;
@@ -121,10 +125,7 @@ private:
 	void freeDevQueue(){
 		freeDeviceArray(devQueue);
 	}
-
-
 };
-
 
 typedef Queue<vertexId_t> vertexQueue;
 
@@ -136,4 +137,55 @@ typedef struct{
 	length_t maxLen;
 } queue;
 
+#if 1
+typedef struct pairVexVal
+{
+	vertexId_t vex;
+	float val;
+	pairVexVal()
+	{
+		//constructor for struct
+	}
+	pairVexVal(vertexId_t _vex, float _val)
+	{
+		vex = _vex;
+		val = _val;//constructor for struct
+	}
+};
+typedef struct {
+	pairVexVal* queue;
+	length_t queueCurr;
+	length_t queueEnd;
+private:
+	length_t maxLen;
+} pairQueue;
+
+typedef struct pairVertex
+{
+	vertexId_t u;
+	vertexId_t v;
+	pairVertex()
+	{
+		//constructor for struct
+	}
+	pairVertex(vertexId_t _u, vertexId_t _v)
+	{
+		//constructor for struct
+		u = _u;
+		v = _v;
+	}
+};
+typedef struct {
+	pairVertex* queue;
+	length_t queueCurr;
+	length_t queueEnd;
+private:
+	length_t maxLen;
+} pairVexQueue;
+
+typedef Queue<pairVexVal> pairPropQueue;
+//typedef Queue<pairVertex> pairPropQueue;
+#endif
 }
+
+
